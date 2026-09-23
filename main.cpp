@@ -81,6 +81,9 @@ cv::Point2f detectCyanTarget(const cv::Mat& frame) {
         return best;
     }
     
+    
+    
+    
     // ==================== 模块2：角度计算 + 解包裹 ====================
     class AngleTracker {
     public:
@@ -296,7 +299,6 @@ cv::Point2f detectCyanTarget(const cv::Mat& frame) {
     
     
 
-    // ==================== 模块3：参数拟合（Eigen + Ω扫描） ====================
     
 
     
