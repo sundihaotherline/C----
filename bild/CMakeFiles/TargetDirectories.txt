@@ -1,0 +1,4 @@
+/home/sundish/C++初试/bild/CMakeFiles/CppTest.dir
+/home/sundish/C++初试/bild/CMakeFiles/color_picker.dir
+/home/sundish/C++初试/bild/CMakeFiles/edit_cache.dir
+/home/sundish/C++初试/bild/CMakeFiles/rebuild_cache.dir
