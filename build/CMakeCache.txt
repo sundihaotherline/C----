@@ -145,7 +145,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=myfirstopencv
+CMAKE_PROJECT_NAME:STATIC=vision_training
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -232,6 +232,15 @@ myfirstopencv_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 myfirstopencv_SOURCE_DIR:STATIC=/home/sundish/C++初试
+
+//Value Computed by CMake
+vision_training_BINARY_DIR:STATIC=/home/sundish/C++初试/build
+
+//Value Computed by CMake
+vision_training_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+vision_training_SOURCE_DIR:STATIC=/home/sundish/C++初试
 
 
 ########################

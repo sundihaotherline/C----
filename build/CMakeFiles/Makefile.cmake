@@ -52,6 +52,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/CppTest.dir/DependInfo.cmake"
-  "CMakeFiles/color_picker.dir/DependInfo.cmake"
+  "CMakeFiles/task1_image.dir/DependInfo.cmake"
+  "CMakeFiles/task2_fit.dir/DependInfo.cmake"
   )
