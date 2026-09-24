@@ -54,4 +54,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/task1_image.dir/DependInfo.cmake"
   "CMakeFiles/task2_fit.dir/DependInfo.cmake"
+  "CMakeFiles/task3_windmill.dir/DependInfo.cmake"
+  "CMakeFiles/color_picker_video.dir/DependInfo.cmake"
   )

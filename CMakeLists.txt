@@ -9,14 +9,15 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-# 任务1（注意路径：src/task1_image/main1.cpp）
+# 任务1
 add_executable(task1_image src/task1_image/main1.cpp)
 target_link_libraries(task1_image ${OpenCV_LIBS})
 
-# 任务2（注意路径：src/task2_fit/main2.cpp）
+# 任务2
 add_executable(task2_fit src/task2_fit/main2.cpp)
 target_link_libraries(task2_fit ${OpenCV_LIBS} Eigen3::Eigen)
 
-# 如果之前那个 color_picker 还要用，就加上这句：
-# add_executable(color_picker main4.cpp) 
-# target_link_libraries(color_picker ${OpenCV_LIBS})
+add_executable(task3_windmill src/task3_windmill/main3.cpp)
+target_link_libraries(task3_windmill ${OpenCV_LIBS} Eigen3::Eigen)
+add_executable(color_picker_video src/color_picker_video/main5.cpp)
+target_link_libraries(color_picker_video ${OpenCV_LIBS} Eigen3::Eigen)

@@ -1,4 +1,6 @@
 /home/sundish/C++初试/build/CMakeFiles/task1_image.dir
 /home/sundish/C++初试/build/CMakeFiles/task2_fit.dir
+/home/sundish/C++初试/build/CMakeFiles/task3_windmill.dir
+/home/sundish/C++初试/build/CMakeFiles/color_picker_video.dir
 /home/sundish/C++初试/build/CMakeFiles/edit_cache.dir
 /home/sundish/C++初试/build/CMakeFiles/rebuild_cache.dir
