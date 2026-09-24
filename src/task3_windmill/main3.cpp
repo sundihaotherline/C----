@@ -4,13 +4,10 @@
 #include <cmath>
 
 int main() {
-    
     cv::VideoCapture cap("resources/task_3.mp4");
     if (!cap.isOpened()) { std::cerr << "❌ 无法打开视频" << std::endl; return -1; }
-    double fps = cap.get(cv::CAP_PROP_FPS);
-        if (fps <= 0 || fps > 120) fps = 60.0; // 防呆设计，防止读不到帧率
-        int delay = cv::max(1, (int)(1000.0 / fps)); // 对于60fps，这里算出来是16毫秒
-    
+
+    int fps = (int)cap.get(cv::CAP_PROP_FPS);
     int w = (int)cap.get(cv::CAP_PROP_FRAME_WIDTH);
     int h = (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 
@@ -25,17 +22,30 @@ int main() {
     cv::Point2f centerR(-1, -1);   // -1 表示尚未找到
     bool hasR = false;             // 标志位：是否已成功定位过 R 标
     
-    // 已知的扇叶距离 R 标的物理半径（任务书提示为220像素）
-    const float TARGET_RADIUS = 220.0f;
-    const float RADIUS_TOLERANCE = 80.0f; // 允许误差（140~300像素内都算候选）
+    // 已知的扇叶距离 R 标的物理半径
+    const float TARGET_RADIUS = 160.0f;
+    const float RADIUS_TOLERANCE = 50.0f; // 允许误差（140~300像素内都算候选）
 
-    // ========== 状态机变量 ==========
+    // ========== 动态 R 标状态 ==========
+    
+    cv::Point2f lastValidCenterR(-1, -1);  // 上一帧有效的R标中心（用于容错）
+   
+    // ========== 目标锁定状态机 ==========
     int currentTargetId = -1;
     int nextTargetId = 1;
     cv::Point2f lastCenter(-1, -1);
+    cv::Point2f lastValidTarget(-1, -1);   // 上一帧有效的目标中心（用于丢失预测）
     int lostFrameCount = 0;
-    const int MAX_LOST_FRAMES = 30;
-    const double MATCH_DIST_THRESH = 80.0;
+    const int MAX_LOST_FRAMES = 30;        // 最多允许丢失30帧
+    const double MATCH_DIST_THRESH = 80.0; // 匹配距离阈值
+
+     // 物理约束（任务书已知半径220）
+const float EXPECTED_RADIUS = 180.0f;   // 预期半径
+
+while (cap.read(frame)) {
+    // ...   
+
+
 
     while (cap.read(frame)) {
         // 1. 颜色提取（收紧H范围，排除黄光干扰）
@@ -59,7 +69,7 @@ int main() {
         std::vector<cv::Point2f> rCandidates;
         for (size_t i = 0; i < contoursR.size(); i++) {
             double area = cv::contourArea(contoursR[i]);
-            if (area < 80 || area > 3000) continue; 
+            if (area < 100 || area > 3000) continue; 
             double perimeter = cv::arcLength(contoursR[i], true);
             double circularity = 4 * M_PI * area / (perimeter * perimeter);
             if (circularity > 0.8) continue; // 排除圆环
@@ -91,12 +101,16 @@ int main() {
             hasR = true;
         }
 
-        // ================= 阶段B：基于 centerR 过滤同心圆 =================
+                // ================= 阶段B：同心圆检测与距离过滤 =================
         std::vector<cv::Point2f> circleCandidates;
         std::vector<float> circleRadii;
+
+        // 获取参照中心
+        cv::Point2f referenceCenter = hasR ? centerR : lastValidCenterR;
+
         for (size_t i = 0; i < contoursCircle.size(); i++) {
             double area = cv::contourArea(contoursCircle[i]);
-            if (area < 300 || area > 15000) continue; 
+            if (area < 1500 || area > 20000) continue; 
 
             std::vector<cv::Point> hull;
             cv::convexHull(contoursCircle[i], hull);
@@ -107,14 +121,16 @@ int main() {
             float radius;
             cv::minEnclosingCircle(contoursCircle[i], center, radius);
 
-            // 【核心改进】：动态距离过滤
-            if (hasR) {
-                float distToR = cv::norm(center - centerR);
-             // 距离 R 标太远或太近，都不可能是能量机关的扇叶
-                if (distToR < TARGET_RADIUS - RADIUS_TOLERANCE || 
-                    distToR > TARGET_RADIUS + RADIUS_TOLERANCE) {
-                    continue;
-                }
+            // 【核心修正1】：如果 R 标还没出现（无效），直接丢弃这个候选者，坚决不锁定！
+            if (referenceCenter.x < 0) {
+                continue; 
+            }
+
+            // 距离过滤（只有 R 标有效时才执行）
+            float distToR = cv::norm(center - referenceCenter);
+            if (distToR < EXPECTED_RADIUS - RADIUS_TOLERANCE || 
+                distToR > EXPECTED_RADIUS + RADIUS_TOLERANCE) {
+                continue; 
             }
 
             circleCandidates.push_back(center);
@@ -126,7 +142,16 @@ int main() {
         cv::Point2f targetCenter;
         float targetRadius = 0;
 
-        if (!circleCandidates.empty()) {
+        // 【核心修正2】：如果 R 标无效，直接跳过整个目标锁定逻辑，进入等待状态
+        if (referenceCenter.x < 0) {
+            currentTargetId = -1;       // 不分配 ID
+            lastCenter = cv::Point2f(-1, -1); 
+            lastValidTarget = cv::Point2f(-1, -1);
+            lostFrameCount = 0;         // 不增加丢失计数，避免触发全图搜索
+            found = false;
+        } 
+        else if (!circleCandidates.empty()) {
+            // 情况A：已有目标，尝试匹配
             if (currentTargetId != -1 && lastCenter.x >= 0) {
                 double minDist = 1e9;
                 int bestIdx = -1;
@@ -140,21 +165,25 @@ int main() {
                     targetCenter = circleCandidates[bestIdx];
                     targetRadius = circleRadii[bestIdx];
                     lastCenter = targetCenter;
+                    lastValidTarget = targetCenter;
                     lostFrameCount = 0;
                     found = true;
                 }
             }
+            
+            // 情况B：初次选择，或丢失重选
             if (!found && (currentTargetId == -1 || lostFrameCount > MAX_LOST_FRAMES)) {
-                // 初次选择：选离预期距离(220)最近的那个
                 int bestIdx = 0;
                 float minDiff = 1e9;
                 for (size_t i = 0; i < circleCandidates.size(); i++) {
-                    float d = std::abs(cv::norm(circleCandidates[i] - centerR) - TARGET_RADIUS);
+                    float d = std::abs(cv::norm(circleCandidates[i] - referenceCenter) - EXPECTED_RADIUS);
                     if (d < minDiff) { minDiff = d; bestIdx = (int)i; }
                 }
+                
                 targetCenter = circleCandidates[bestIdx];
                 targetRadius = circleRadii[bestIdx];
                 lastCenter = targetCenter;
+                lastValidTarget = targetCenter;
                 currentTargetId = nextTargetId++;
                 lostFrameCount = 0;
                 found = true;
@@ -164,9 +193,10 @@ int main() {
 
         // ================= 绘制 =================
         // 画 R 标中心
-        if (hasR) {
-            cv::circle(frame, centerR, 5, cv::Scalar(255, 255, 255), -1);
-            cv::putText(frame, "R", cv::Point(centerR.x + 10, centerR.y - 10), 
+        if (hasR || lastValidCenterR.x > 0) {
+            cv::Point2f refCenter = hasR ? centerR : lastValidCenterR;
+            cv::circle(frame, refCenter, 5, cv::Scalar(255, 255, 255), -1);
+            cv::putText(frame, "R", cv::Point(refCenter.x + 10, refCenter.y - 10), 
                         cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 2);
         }
 
@@ -174,8 +204,9 @@ int main() {
         if (found) {
             cv::circle(frame, targetCenter, (int)targetRadius, cv::Scalar(0, 255, 0), 2);
             cv::circle(frame, targetCenter, 3, cv::Scalar(0, 0, 255), -1);
-            if (hasR) {
-                cv::line(frame, centerR, targetCenter, cv::Scalar(0, 255, 255), 2);
+            if (hasR || lastValidCenterR.x > 0) {
+                cv::Point2f refCenter = hasR ? centerR : lastValidCenterR;
+                cv::line(frame, refCenter, targetCenter, cv::Scalar(0, 255, 255), 2);
             }
             cv::putText(frame, "Target ID: " + std::to_string(currentTargetId),
                         cv::Point(targetCenter.x - 30, targetCenter.y - 40),
@@ -183,22 +214,37 @@ int main() {
             cv::putText(frame, "State: DETECTED", cv::Point(30, 50),
                         cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 255, 0), 2);
         } else {
-            lostFrameCount++;
-            if (lostFrameCount > MAX_LOST_FRAMES) {
-                currentTargetId = -1;
-                lastCenter = cv::Point2f(-1, -1);
+            // 【核心修正3】：如果是没有 R 标导致的等待，不要增加丢失帧数，显示等待提示
+            if (referenceCenter.x < 0) {
+                cv::putText(frame, "State: WAITING FOR R", cv::Point(30, 50),
+                            cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 0), 2);
+                // 也可以画一个提示圆环
+                cv::circle(frame, cv::Point(w/2, h/2), 50, cv::Scalar(255, 255, 0), 2);
+            } else {
+                lostFrameCount++;
+                // 丢失预测（画虚框）
+                if (lostFrameCount <= MAX_LOST_FRAMES && lastValidTarget.x > 0) {
+                    cv::circle(frame, lastValidTarget, 30, cv::Scalar(0, 0, 255), 2);
+                    cv::putText(frame, "State: PREDICTING (Lost)", cv::Point(30, 50),
+                                cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 165, 255), 2);
+                } else {
+                    currentTargetId = -1; // 真正放弃
+                    lastCenter = cv::Point2f(-1, -1);
+                    lastValidTarget = cv::Point2f(-1, -1);
+                    cv::putText(frame, "State: LOST", cv::Point(30, 50),
+                                cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 2);
+                }
             }
-            cv::putText(frame, "State: LOST", cv::Point(30, 50),
-                        cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 2);
         }
 
+        // 写入视频
         writer.write(frame);
         cv::imshow("Tracking", frame);
-        if (cv::waitKey(delay) == 27) break;
+        if (cv::waitKey(1) == 27) break;
     }
 
     cap.release();
     writer.release();
     cv::destroyAllWindows();
     return 0;
-}
+}}
