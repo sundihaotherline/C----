@@ -211,6 +211,22 @@ const float EXPECTED_RADIUS = 180.0f;   // 预期半径
                         cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 2);
             cv::putText(frame, "State: DETECTED", cv::Point(30, 50),
                         cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 255, 0), 2);
+            // ================= 新增：计算目标相对 R 的角度 =================
+                    if (hasR || lastValidCenterR.x > 0) {
+                        cv::Point2f refCenter = hasR ? centerR : lastValidCenterR;
+                        float dx = targetCenter.x - refCenter.x;
+                        float dy = targetCenter.y - refCenter.y;
+                        // 图像 y 向下，用 -dy 转成“向上为正”，再从正右方起算、逆时针为正
+                        float angle_rad = std::atan2(-dy, dx);
+                        float angle_deg = angle_rad * 180.0f / (float)M_PI;
+
+                        char angleText[64];
+                        snprintf(angleText, sizeof(angleText), "Angle: %.1f deg", angle_deg);
+                        cv::putText(frame, angleText,
+                                    cv::Point(30, 90),
+                                    cv::FONT_HERSHEY_SIMPLEX, 0.8,
+                                    cv::Scalar(255, 255, 255), 2);
+                    }
         } else {
             // 【核心修正3】：如果是没有 R 标导致的等待，不要增加丢失帧数，显示等待提示
             if (referenceCenter.x < 0) {
@@ -244,5 +260,277 @@ const float EXPECTED_RADIUS = 180.0f;   // 预期半径
     cap.release();
     writer.release();
     cv::destroyAllWindows();
-    return 0;
-}
+    
+    
+    
+    
+    
+    //任务三第二部分
+    
+    
+    
+    
+
+
+    
+  
+    // ===================================================================
+    // ================== 第二部分：处理 task_4.mp4 (多目标) ==============
+    // ===================================================================
+       // ===================================================================
+    // ============== 第二部分：task_4.mp4 (简化版：找R + 找目标) ==========
+    // ===================================================================
+    {
+        cv::VideoCapture cap4("resources/task_4.mp4");
+        if (!cap4.isOpened()) {
+            std::cerr << "❌ 无法打开 task_4.mp4" << std::endl;
+        } else {
+            int fps4 = (int)cap4.get(cv::CAP_PROP_FPS);
+            int w4 = (int)cap4.get(cv::CAP_PROP_FRAME_WIDTH);
+            int h4 = (int)cap4.get(cv::CAP_PROP_FRAME_HEIGHT);
+
+            cv::VideoWriter writer4("result/task3_windmill/task_4/recognition_overlay.mp4",
+                                    cv::VideoWriter::fourcc('m', 'p', '4', 'v'),
+                                    fps4, cv::Size(w4, h4));
+
+            cv::Mat frame4, hsv4, maskLow4, maskHigh4, mask4;
+            cv::Mat kernelBig4 = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(15, 15));
+            cv::Mat kernelDilate4 = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+
+            // R 标状态
+            cv::Point2f centerR4(-1, -1);
+            cv::Point2f lastValidCenterR4(-1, -1);
+            bool hasR4 = false;
+            int rStableCounter4 = 0;
+            cv::Point2f lastRGuess4(-1, -1);
+
+            // 目标状态机
+            int currentTargetId4 = -1;
+            int nextTargetId4 = 1;
+            cv::Point2f lastCenter4(-1, -1);
+            bool hasTarget4 = false;
+
+            const float EXPECTED_RADIUS4 = 180.0f;
+            const float RADIUS_TOLERANCE4 = 50.0f;
+
+            while (cap4.read(frame4)) {
+                // 1. 红色掩膜
+                cv::cvtColor(frame4, hsv4, cv::COLOR_BGR2HSV);
+                cv::inRange(hsv4, cv::Scalar(0, 120, 80), cv::Scalar(15, 255, 255), maskLow4);
+                cv::inRange(hsv4, cv::Scalar(168, 120, 80), cv::Scalar(179, 255, 255), maskHigh4);
+                cv::bitwise_or(maskLow4, maskHigh4, mask4);
+
+                // 2. 形态学：大核闭运算用于同心圆；膨胀用于 R 标
+                cv::Mat maskCircle4 = mask4.clone();
+                cv::morphologyEx(maskCircle4, maskCircle4, cv::MORPH_CLOSE, kernelBig4);
+
+                cv::Mat maskR4;
+                cv::dilate(mask4, maskR4, kernelDilate4);
+
+                // ================= 阶段A：定位 R 标 =================
+                std::vector<std::vector<cv::Point>> contoursR4;
+                cv::findContours(maskR4, contoursR4, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+                std::vector<cv::Point2f> rCandidates4;
+                for (size_t i = 0; i < contoursR4.size(); i++) {
+                    double area = cv::contourArea(contoursR4[i]);
+                    if (area < 80 || area > 2000) continue;
+
+                    double perimeter = cv::arcLength(contoursR4[i], true);
+                    if (perimeter == 0) continue;
+                    double circularity = 4 * M_PI * area / (perimeter * perimeter);
+                    if (circularity > 0.75) continue;
+
+                    cv::Rect box = cv::boundingRect(contoursR4[i]);
+                    double aspectRatio = (double)box.width / box.height;
+                    if (aspectRatio < 0.2 || aspectRatio > 5.0) continue;
+
+                    cv::Moments m = cv::moments(contoursR4[i]);
+                    if (m.m00 > 0) {
+                        cv::Point2f candidate((float)(m.m10 / m.m00), (float)(m.m01 / m.m00));
+                        if (cv::norm(candidate - cv::Point2f(w4 / 2.0, h4 / 2.0)) > 150.0) continue;
+                        rCandidates4.push_back(candidate);
+                    }
+                }
+
+                if (!rCandidates4.empty()) {
+                    double minDist = 1e9;
+                    cv::Point2f bestR4;
+                    for (auto& rc : rCandidates4) {
+                        double d = hasR4 ? cv::norm(rc - centerR4)
+                                         : cv::norm(rc - cv::Point2f(w4 / 2.0, h4 / 2.0));
+                        if (d < minDist) { minDist = d; bestR4 = rc; }
+                    }
+                    if (lastRGuess4.x < 0 || cv::norm(bestR4 - lastRGuess4) < 100.0) {
+                        rStableCounter4++;
+                    } else {
+                        rStableCounter4 = 1;
+                    }
+                    lastRGuess4 = bestR4;
+
+                    if (rStableCounter4 >= 10 && !hasR4) {
+                        centerR4 = bestR4;
+                        lastValidCenterR4 = centerR4;
+                        hasR4 = true;
+                        std::cout << "✅ [task_4] R 标已稳定锁定！" << std::endl;
+                    } else if (rStableCounter4 >= 10) {
+                        centerR4 = bestR4;
+                        lastValidCenterR4 = centerR4;
+                    } else {
+                        hasR4 = false;
+                    }
+                } else {
+                    rStableCounter4 = 0;
+                    hasR4 = false;
+                }
+
+                // ================= 阶段B：找同心圆目标候选 =================
+                std::vector<std::vector<cv::Point>> contoursCircle4;
+                cv::findContours(maskCircle4, contoursCircle4, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+                std::vector<cv::Point2f> candidates4;
+                std::vector<float> radii4;
+                cv::Point2f refCenter4 = hasR4 ? centerR4 : lastValidCenterR4;
+
+                for (size_t i = 0; i < contoursCircle4.size(); i++) {
+                    double area = cv::contourArea(contoursCircle4[i]);
+                    if (area < 1500 || area > 20000) continue;
+
+                    std::vector<cv::Point> hull4;
+                    cv::convexHull(contoursCircle4[i], hull4);
+                    double solidity = area / cv::contourArea(hull4);
+                    if (solidity < 0.85) continue;
+
+                    cv::Point2f center;
+                    float radius;
+                    cv::minEnclosingCircle(contoursCircle4[i], center, radius);
+
+                    if (refCenter4.x < 0) continue;
+                    float distToR = cv::norm(center - refCenter4);
+                    if (distToR < EXPECTED_RADIUS4 - RADIUS_TOLERANCE4 ||
+                        distToR > EXPECTED_RADIUS4 + RADIUS_TOLERANCE4) continue;
+
+                    candidates4.push_back(center);
+                    radii4.push_back(radius);
+                }
+
+                // ================= 状态机：有目标就跟踪，没目标就找一个 =================
+                cv::Point2f drawTarget4;
+                float drawRadius4 = 0;
+                bool drawFound4 = false;
+
+                if (refCenter4.x < 0) {
+                    // R 标还没出现，等待
+                    hasTarget4 = false;
+                    currentTargetId4 = -1;
+                } else if (hasTarget4 && lastCenter4.x >= 0) {
+                    // 已锁定目标：在候选池里找离上次最近的
+                    double minDist = 1e9;
+                    int bestIdx = -1;
+                    for (size_t i = 0; i < candidates4.size(); i++) {
+                        double d = cv::norm(candidates4[i] - lastCenter4);
+                        if (d < minDist && d < 150.0) { minDist = d; bestIdx = (int)i; }
+                    }
+                    if (bestIdx != -1) {
+                        // 找到，保持 ID
+                        lastCenter4 = candidates4[bestIdx];
+                        drawTarget4 = lastCenter4;
+                        drawRadius4 = radii4[bestIdx];
+                        drawFound4 = true;
+                    } else {
+                        // 丢失，清空目标，允许下一帧重选
+                        std::cout << "⚠️ [task_4] 目标 " << currentTargetId4 << " 丢失" << std::endl;
+                        hasTarget4 = false;
+                        currentTargetId4 = -1;
+                    }
+                } else if (!candidates4.empty()) {
+                    // 没有目标，找一个最近的作为新目标
+                    int bestIdx = 0;
+                    float minDiff = 1e9;
+                    for (size_t i = 0; i < candidates4.size(); i++) {
+                        float d = std::abs(cv::norm(candidates4[i] - refCenter4) - EXPECTED_RADIUS4);
+                        if (d < minDiff) { minDiff = d; bestIdx = (int)i; }
+                    }
+                    lastCenter4 = candidates4[bestIdx];
+                    drawTarget4 = lastCenter4;
+                    drawRadius4 = radii4[bestIdx];
+                    drawFound4 = true;
+                    hasTarget4 = true;
+                    currentTargetId4 = nextTargetId4++;
+                    std::cout << "✅ [task_4] 锁定目标 ID: " << currentTargetId4 << std::endl;
+                }
+
+                // ================= 绘制 =================
+                // 画 R 标
+                if (hasR4 || lastValidCenterR4.x > 0) {
+                    cv::Point2f refDraw = hasR4 ? centerR4 : lastValidCenterR4;
+                    cv::circle(frame4, refDraw, 5, cv::Scalar(255, 255, 255), -1);
+                    cv::putText(frame4, "R",
+                                cv::Point(refDraw.x + 10, refDraw.y - 10),
+                                cv::FONT_HERSHEY_SIMPLEX, 0.6,
+                                cv::Scalar(255, 255, 255), 2);
+                }
+
+                // 画目标 + 连线 + ID
+                if (drawFound4) {
+                    cv::circle(frame4, drawTarget4, (int)drawRadius4, cv::Scalar(0, 255, 0), 2);
+                    cv::circle(frame4, drawTarget4, 3, cv::Scalar(0, 0, 255), -1);
+
+                    if (hasR4 || lastValidCenterR4.x > 0) {
+                        cv::Point2f refDraw = hasR4 ? centerR4 : lastValidCenterR4;
+                        cv::line(frame4, refDraw, drawTarget4, cv::Scalar(0, 255, 255), 2);
+                    }
+
+                    cv::putText(frame4, "Target ID: " + std::to_string(currentTargetId4),
+                                cv::Point(drawTarget4.x - 30, drawTarget4.y - 40),
+                                cv::FONT_HERSHEY_SIMPLEX, 0.6,
+                                cv::Scalar(255, 255, 255), 2);
+
+                    cv::putText(frame4, "State: DETECTED", cv::Point(30, 50),
+                                cv::FONT_HERSHEY_SIMPLEX, 1.0,
+                                cv::Scalar(0, 255, 0), 2);
+                } else {
+                    if (refCenter4.x < 0) {
+                        cv::putText(frame4, "State: WAITING FOR R", cv::Point(30, 50),
+                                    cv::FONT_HERSHEY_SIMPLEX, 1.0,
+                                    cv::Scalar(255, 255, 0), 2);
+                    } else {
+                        cv::putText(frame4, "State: SEARCHING", cv::Point(30, 50),
+                                    cv::FONT_HERSHEY_SIMPLEX, 1.0,
+                                    cv::Scalar(0, 165, 255), 2);
+                    }
+                }
+
+                writer4.write(frame4);
+                cv::imshow("Tracking task_4", frame4);
+                if (cv::waitKey(1) == 27) break;
+            }
+
+            cap4.release();
+            writer4.release();
+            cv::destroyAllWindows();
+        }
+    }}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+ 
+
+
+
+
+
+
+
+
+
+
+

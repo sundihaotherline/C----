@@ -22,7 +22,7 @@ void onMouse(int event, int x, int y, int flags, void* param) {
 
 int main() {
     // 改成你要取色的视频路径（比如 task_3.mp4 或 task_4.mp4）
-    cv::VideoCapture cap("resources/task_3.mp4");
+    cv::VideoCapture cap("resources/task_4.mp4");
     if (!cap.isOpened()) {
         std::cerr << "❌ 无法打开视频！" << std::endl;
         return -1;

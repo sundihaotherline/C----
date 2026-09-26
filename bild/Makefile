@@ -117,78 +117,152 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named CppTest
+# Target rules for targets named task1_image
 
 # Build rule for target.
-CppTest: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppTest
-.PHONY : CppTest
+task1_image: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 task1_image
+.PHONY : task1_image
 
 # fast build rule for target.
-CppTest/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppTest.dir/build.make CMakeFiles/CppTest.dir/build
-.PHONY : CppTest/fast
+task1_image/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task1_image.dir/build.make CMakeFiles/task1_image.dir/build
+.PHONY : task1_image/fast
 
 #=============================================================================
-# Target rules for targets named color_picker
+# Target rules for targets named task2_fit
 
 # Build rule for target.
-color_picker: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 color_picker
-.PHONY : color_picker
+task2_fit: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 task2_fit
+.PHONY : task2_fit
 
 # fast build rule for target.
-color_picker/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker.dir/build.make CMakeFiles/color_picker.dir/build
-.PHONY : color_picker/fast
+task2_fit/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task2_fit.dir/build.make CMakeFiles/task2_fit.dir/build
+.PHONY : task2_fit/fast
 
-main.o: main.cpp.o
-.PHONY : main.o
+#=============================================================================
+# Target rules for targets named task3_windmill
+
+# Build rule for target.
+task3_windmill: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 task3_windmill
+.PHONY : task3_windmill
+
+# fast build rule for target.
+task3_windmill/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task3_windmill.dir/build.make CMakeFiles/task3_windmill.dir/build
+.PHONY : task3_windmill/fast
+
+#=============================================================================
+# Target rules for targets named color_picker_video
+
+# Build rule for target.
+color_picker_video: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 color_picker_video
+.PHONY : color_picker_video
+
+# fast build rule for target.
+color_picker_video/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker_video.dir/build.make CMakeFiles/color_picker_video.dir/build
+.PHONY : color_picker_video/fast
+
+src/color_picker_video/main5.o: src/color_picker_video/main5.cpp.o
+.PHONY : src/color_picker_video/main5.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppTest.dir/build.make CMakeFiles/CppTest.dir/main.cpp.o
-.PHONY : main.cpp.o
+src/color_picker_video/main5.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker_video.dir/build.make CMakeFiles/color_picker_video.dir/src/color_picker_video/main5.cpp.o
+.PHONY : src/color_picker_video/main5.cpp.o
 
-main.i: main.cpp.i
-.PHONY : main.i
+src/color_picker_video/main5.i: src/color_picker_video/main5.cpp.i
+.PHONY : src/color_picker_video/main5.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppTest.dir/build.make CMakeFiles/CppTest.dir/main.cpp.i
-.PHONY : main.cpp.i
+src/color_picker_video/main5.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker_video.dir/build.make CMakeFiles/color_picker_video.dir/src/color_picker_video/main5.cpp.i
+.PHONY : src/color_picker_video/main5.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+src/color_picker_video/main5.s: src/color_picker_video/main5.cpp.s
+.PHONY : src/color_picker_video/main5.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppTest.dir/build.make CMakeFiles/CppTest.dir/main.cpp.s
-.PHONY : main.cpp.s
+src/color_picker_video/main5.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker_video.dir/build.make CMakeFiles/color_picker_video.dir/src/color_picker_video/main5.cpp.s
+.PHONY : src/color_picker_video/main5.cpp.s
 
-main2.o: main2.cpp.o
-.PHONY : main2.o
+src/task1_image/main1.o: src/task1_image/main1.cpp.o
+.PHONY : src/task1_image/main1.o
 
 # target to build an object file
-main2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker.dir/build.make CMakeFiles/color_picker.dir/main2.cpp.o
-.PHONY : main2.cpp.o
+src/task1_image/main1.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task1_image.dir/build.make CMakeFiles/task1_image.dir/src/task1_image/main1.cpp.o
+.PHONY : src/task1_image/main1.cpp.o
 
-main2.i: main2.cpp.i
-.PHONY : main2.i
+src/task1_image/main1.i: src/task1_image/main1.cpp.i
+.PHONY : src/task1_image/main1.i
 
 # target to preprocess a source file
-main2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker.dir/build.make CMakeFiles/color_picker.dir/main2.cpp.i
-.PHONY : main2.cpp.i
+src/task1_image/main1.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task1_image.dir/build.make CMakeFiles/task1_image.dir/src/task1_image/main1.cpp.i
+.PHONY : src/task1_image/main1.cpp.i
 
-main2.s: main2.cpp.s
-.PHONY : main2.s
+src/task1_image/main1.s: src/task1_image/main1.cpp.s
+.PHONY : src/task1_image/main1.s
 
 # target to generate assembly for a file
-main2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker.dir/build.make CMakeFiles/color_picker.dir/main2.cpp.s
-.PHONY : main2.cpp.s
+src/task1_image/main1.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task1_image.dir/build.make CMakeFiles/task1_image.dir/src/task1_image/main1.cpp.s
+.PHONY : src/task1_image/main1.cpp.s
+
+src/task2_fit/main2.o: src/task2_fit/main2.cpp.o
+.PHONY : src/task2_fit/main2.o
+
+# target to build an object file
+src/task2_fit/main2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task2_fit.dir/build.make CMakeFiles/task2_fit.dir/src/task2_fit/main2.cpp.o
+.PHONY : src/task2_fit/main2.cpp.o
+
+src/task2_fit/main2.i: src/task2_fit/main2.cpp.i
+.PHONY : src/task2_fit/main2.i
+
+# target to preprocess a source file
+src/task2_fit/main2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task2_fit.dir/build.make CMakeFiles/task2_fit.dir/src/task2_fit/main2.cpp.i
+.PHONY : src/task2_fit/main2.cpp.i
+
+src/task2_fit/main2.s: src/task2_fit/main2.cpp.s
+.PHONY : src/task2_fit/main2.s
+
+# target to generate assembly for a file
+src/task2_fit/main2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task2_fit.dir/build.make CMakeFiles/task2_fit.dir/src/task2_fit/main2.cpp.s
+.PHONY : src/task2_fit/main2.cpp.s
+
+src/task3_windmill/main3.o: src/task3_windmill/main3.cpp.o
+.PHONY : src/task3_windmill/main3.o
+
+# target to build an object file
+src/task3_windmill/main3.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task3_windmill.dir/build.make CMakeFiles/task3_windmill.dir/src/task3_windmill/main3.cpp.o
+.PHONY : src/task3_windmill/main3.cpp.o
+
+src/task3_windmill/main3.i: src/task3_windmill/main3.cpp.i
+.PHONY : src/task3_windmill/main3.i
+
+# target to preprocess a source file
+src/task3_windmill/main3.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task3_windmill.dir/build.make CMakeFiles/task3_windmill.dir/src/task3_windmill/main3.cpp.i
+.PHONY : src/task3_windmill/main3.cpp.i
+
+src/task3_windmill/main3.s: src/task3_windmill/main3.cpp.s
+.PHONY : src/task3_windmill/main3.s
+
+# target to generate assembly for a file
+src/task3_windmill/main3.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task3_windmill.dir/build.make CMakeFiles/task3_windmill.dir/src/task3_windmill/main3.cpp.s
+.PHONY : src/task3_windmill/main3.cpp.s
 
 # Help Target
 help:
@@ -198,14 +272,22 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... CppTest"
-	@echo "... color_picker"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
-	@echo "... main2.o"
-	@echo "... main2.i"
-	@echo "... main2.s"
+	@echo "... color_picker_video"
+	@echo "... task1_image"
+	@echo "... task2_fit"
+	@echo "... task3_windmill"
+	@echo "... src/color_picker_video/main5.o"
+	@echo "... src/color_picker_video/main5.i"
+	@echo "... src/color_picker_video/main5.s"
+	@echo "... src/task1_image/main1.o"
+	@echo "... src/task1_image/main1.i"
+	@echo "... src/task1_image/main1.s"
+	@echo "... src/task2_fit/main2.o"
+	@echo "... src/task2_fit/main2.i"
+	@echo "... src/task2_fit/main2.s"
+	@echo "... src/task3_windmill/main3.o"
+	@echo "... src/task3_windmill/main3.i"
+	@echo "... src/task3_windmill/main3.s"
 .PHONY : help
 
 

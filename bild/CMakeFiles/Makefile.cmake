@@ -34,6 +34,9 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.22/Modules/Platform/Linux-GNU.cmake"
   "/usr/share/cmake-3.22/Modules/Platform/Linux.cmake"
   "/usr/share/cmake-3.22/Modules/Platform/UnixPaths.cmake"
+  "/usr/share/eigen3/cmake/Eigen3Config.cmake"
+  "/usr/share/eigen3/cmake/Eigen3ConfigVersion.cmake"
+  "/usr/share/eigen3/cmake/Eigen3Targets.cmake"
   )
 
 # The corresponding makefile is:
@@ -49,6 +52,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/CppTest.dir/DependInfo.cmake"
-  "CMakeFiles/color_picker.dir/DependInfo.cmake"
+  "CMakeFiles/task1_image.dir/DependInfo.cmake"
+  "CMakeFiles/task2_fit.dir/DependInfo.cmake"
+  "CMakeFiles/task3_windmill.dir/DependInfo.cmake"
+  "CMakeFiles/color_picker_video.dir/DependInfo.cmake"
   )

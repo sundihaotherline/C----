@@ -63,8 +63,10 @@ CMAKE_BINARY_DIR = /home/sundish/C++初试/bild
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/CppTest.dir/all
-all: CMakeFiles/color_picker.dir/all
+all: CMakeFiles/task1_image.dir/all
+all: CMakeFiles/task2_fit.dir/all
+all: CMakeFiles/task3_windmill.dir/all
+all: CMakeFiles/color_picker_video.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -72,61 +74,115 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/CppTest.dir/clean
-clean: CMakeFiles/color_picker.dir/clean
+clean: CMakeFiles/task1_image.dir/clean
+clean: CMakeFiles/task2_fit.dir/clean
+clean: CMakeFiles/task3_windmill.dir/clean
+clean: CMakeFiles/color_picker_video.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/CppTest.dir
+# Target rules for target CMakeFiles/task1_image.dir
 
 # All Build rule for target.
-CMakeFiles/CppTest.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppTest.dir/build.make CMakeFiles/CppTest.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppTest.dir/build.make CMakeFiles/CppTest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sundish/C++初试/bild/CMakeFiles --progress-num=1,2 "Built target CppTest"
-.PHONY : CMakeFiles/CppTest.dir/all
+CMakeFiles/task1_image.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task1_image.dir/build.make CMakeFiles/task1_image.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task1_image.dir/build.make CMakeFiles/task1_image.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sundish/C++初试/bild/CMakeFiles --progress-num=3,4 "Built target task1_image"
+.PHONY : CMakeFiles/task1_image.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/CppTest.dir/rule: cmake_check_build_system
+CMakeFiles/task1_image.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sundish/C++初试/bild/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/CppTest.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/task1_image.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sundish/C++初试/bild/CMakeFiles 0
-.PHONY : CMakeFiles/CppTest.dir/rule
+.PHONY : CMakeFiles/task1_image.dir/rule
 
 # Convenience name for target.
-CppTest: CMakeFiles/CppTest.dir/rule
-.PHONY : CppTest
+task1_image: CMakeFiles/task1_image.dir/rule
+.PHONY : task1_image
 
 # clean rule for target.
-CMakeFiles/CppTest.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppTest.dir/build.make CMakeFiles/CppTest.dir/clean
-.PHONY : CMakeFiles/CppTest.dir/clean
+CMakeFiles/task1_image.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task1_image.dir/build.make CMakeFiles/task1_image.dir/clean
+.PHONY : CMakeFiles/task1_image.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/color_picker.dir
+# Target rules for target CMakeFiles/task2_fit.dir
 
 # All Build rule for target.
-CMakeFiles/color_picker.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker.dir/build.make CMakeFiles/color_picker.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker.dir/build.make CMakeFiles/color_picker.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sundish/C++初试/bild/CMakeFiles --progress-num=3,4 "Built target color_picker"
-.PHONY : CMakeFiles/color_picker.dir/all
+CMakeFiles/task2_fit.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task2_fit.dir/build.make CMakeFiles/task2_fit.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task2_fit.dir/build.make CMakeFiles/task2_fit.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sundish/C++初试/bild/CMakeFiles --progress-num=5,6 "Built target task2_fit"
+.PHONY : CMakeFiles/task2_fit.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/color_picker.dir/rule: cmake_check_build_system
+CMakeFiles/task2_fit.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sundish/C++初试/bild/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/color_picker.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/task2_fit.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sundish/C++初试/bild/CMakeFiles 0
-.PHONY : CMakeFiles/color_picker.dir/rule
+.PHONY : CMakeFiles/task2_fit.dir/rule
 
 # Convenience name for target.
-color_picker: CMakeFiles/color_picker.dir/rule
-.PHONY : color_picker
+task2_fit: CMakeFiles/task2_fit.dir/rule
+.PHONY : task2_fit
 
 # clean rule for target.
-CMakeFiles/color_picker.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker.dir/build.make CMakeFiles/color_picker.dir/clean
-.PHONY : CMakeFiles/color_picker.dir/clean
+CMakeFiles/task2_fit.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task2_fit.dir/build.make CMakeFiles/task2_fit.dir/clean
+.PHONY : CMakeFiles/task2_fit.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/task3_windmill.dir
+
+# All Build rule for target.
+CMakeFiles/task3_windmill.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task3_windmill.dir/build.make CMakeFiles/task3_windmill.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task3_windmill.dir/build.make CMakeFiles/task3_windmill.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sundish/C++初试/bild/CMakeFiles --progress-num=7,8 "Built target task3_windmill"
+.PHONY : CMakeFiles/task3_windmill.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/task3_windmill.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sundish/C++初试/bild/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/task3_windmill.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sundish/C++初试/bild/CMakeFiles 0
+.PHONY : CMakeFiles/task3_windmill.dir/rule
+
+# Convenience name for target.
+task3_windmill: CMakeFiles/task3_windmill.dir/rule
+.PHONY : task3_windmill
+
+# clean rule for target.
+CMakeFiles/task3_windmill.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task3_windmill.dir/build.make CMakeFiles/task3_windmill.dir/clean
+.PHONY : CMakeFiles/task3_windmill.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/color_picker_video.dir
+
+# All Build rule for target.
+CMakeFiles/color_picker_video.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker_video.dir/build.make CMakeFiles/color_picker_video.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker_video.dir/build.make CMakeFiles/color_picker_video.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sundish/C++初试/bild/CMakeFiles --progress-num=1,2 "Built target color_picker_video"
+.PHONY : CMakeFiles/color_picker_video.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/color_picker_video.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sundish/C++初试/bild/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/color_picker_video.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sundish/C++初试/bild/CMakeFiles 0
+.PHONY : CMakeFiles/color_picker_video.dir/rule
+
+# Convenience name for target.
+color_picker_video: CMakeFiles/color_picker_video.dir/rule
+.PHONY : color_picker_video
+
+# clean rule for target.
+CMakeFiles/color_picker_video.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/color_picker_video.dir/build.make CMakeFiles/color_picker_video.dir/clean
+.PHONY : CMakeFiles/color_picker_video.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
