@@ -1,0 +1,6 @@
+
+build/
+.vscode/
+*.0
+*.out
+.DS_Store
