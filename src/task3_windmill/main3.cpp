@@ -42,8 +42,6 @@ int main() {
      // 物理约束（任务书已知半径220）
 const float EXPECTED_RADIUS = 180.0f;   // 预期半径
 
-while (cap.read(frame)) {
-    // ...   
 
 
 
@@ -247,4 +245,4 @@ while (cap.read(frame)) {
     writer.release();
     cv::destroyAllWindows();
     return 0;
-}}
+}
